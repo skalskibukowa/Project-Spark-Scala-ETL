@@ -41,9 +41,5 @@ class TweetsLoader(sparkSession: SparkSession) {
     .withColumn("category", lit(TweetsLoader.GRAMMYS_LABEL))
     .na.drop()
 
-  def loadTwitter(): Dataset[Row] = sparkSession.read
-    .option("header", "true")
-    .csv("Datasource/twitter_dataset.csv")
-    .withColumn("category", lit(TweetsLoader.TWITTER_LABEL))
-    .na.drop()
+
 }

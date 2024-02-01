@@ -109,10 +109,15 @@ object Main {
 
     val underFiftyForbes: Dataset[Row] = forbesAnalyzer.filterUnderFiftyAgeForbes(forbesCleanedDF)
     val countCountriesForbes: Dataset[Row] = forbesAnalyzer.countCountriesForbes(forbesCleanedDF)
+    val top10SelfMadeForbes: Dataset[Row] = forbesAnalyzer.countTop10SelfMade(forbesCleanedDF)
 
     underFiftyForbes.show()
    // TOP 4 Countries with Forbes people
     countCountriesForbes.show(4)
+
+   // TOP 10 Self Made Forbes
+   top10SelfMadeForbes.show()
+
 
   }
 }

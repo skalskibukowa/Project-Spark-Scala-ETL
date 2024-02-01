@@ -12,6 +12,7 @@ object ForbesAnalyzer {
   val SOURCE: String = "source"
   val COUNTRY: String = "country"
   val COUNTRY_NO: String = "country_no"
+  val SELF_MADE: String = "selfMade"
 }
 
 
@@ -42,5 +43,16 @@ class ForbesAnalyzer(sparkSession: SparkSession) {
       .orderBy(desc(ForbesAnalyzer.COUNTRY_NO))
   }
 
+  /*
+  Aggregation
+  @param df
+  @return Dataframe with columns rank, personName, age, finalWorth
+   */
 
+  def countTop10SelfMade(df: Dataset[Row]): Dataset[Row] = {
+    df.select(col(ForbesAnalyzer.RANK), col(ForbesAnalyzer.PERSON_NAME), col(ForbesAnalyzer.AGE), col(ForbesAnalyzer.FINAL_WORTH))
+      .filter(col(ForbesAnalyzer.SELF_MADE) === "True")
+      .sort(col(ForbesAnalyzer.SELF_MADE).desc)
+      .limit(10)
+  }
 }
