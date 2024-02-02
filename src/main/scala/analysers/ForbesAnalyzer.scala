@@ -22,6 +22,8 @@ class ForbesAnalyzer(sparkSession: SparkSession) {
    Filter
    @param df
    @return Dataframe with columns rank, personName, age, finalWorth, country, source
+
+   Description: Filter richest guys under fifty years old
    */
 
   def filterUnderFiftyAgeForbes(df: Dataset[Row]): Dataset[Row] = {
@@ -33,6 +35,8 @@ class ForbesAnalyzer(sparkSession: SparkSession) {
   Aggregation
   @param df
   @return Dataframe with columns country, count
+
+  Description: Show the number of richest guys in countries
    */
 
   def countCountriesForbes(df: Dataset[Row]): Dataset[Row] = {
@@ -47,9 +51,11 @@ class ForbesAnalyzer(sparkSession: SparkSession) {
   Aggregation
   @param df
   @return Dataframe with columns rank, personName, age, finalWorth
+
+  Description: Show top 10 self-made
    */
 
-  def countTop10SelfMade(df: Dataset[Row]): Dataset[Row] = {
+  def top10SelfMade(df: Dataset[Row]): Dataset[Row] = {
     df.select(col(ForbesAnalyzer.RANK), col(ForbesAnalyzer.PERSON_NAME), col(ForbesAnalyzer.AGE), col(ForbesAnalyzer.FINAL_WORTH))
       .filter(col(ForbesAnalyzer.SELF_MADE) === "True")
       .sort(col(ForbesAnalyzer.SELF_MADE).desc)

@@ -1,7 +1,10 @@
-import analysers.{ForbesAnalyzer, TweetsAnalyzer, TweetsSearch}
-import cleaners.{ForbesCleaner, TweetsCleaner}
-import loaders.{ForbesLoader, TweetsLoader}
+import analysers.{ForbesAnalyzer, TweetsAnalyzer, TweetsSearch, TweetsUserAnalyzer}
+import cleaners.{ForbesCleaner, TweetsCleaner, TweetsUserCleaner}
+import loaders.{ForbesLoader, TweetsLoader, TweetsUserLoader}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
+
+import java.time.LocalDate
+
 
 object Main {
 
@@ -10,6 +13,7 @@ object Main {
   //  1. Load data to Spark. Loader
   //  2. Clean data. Cleaner
   //  3. Analyze data. Analyzer
+  //  4. Save data to parquet/csv format
 
   def main(args: Array[String]): Unit = {
     val spark: SparkSession = SparkSession.builder()
@@ -66,6 +70,7 @@ object Main {
     println(twitterDF.count())
  */
 
+   // ********** Tweets ETL
 
    // Tweets create objects
     val tweetsLoader: TweetsLoader = new TweetsLoader(spark)
@@ -73,51 +78,93 @@ object Main {
     val tweetsSearch: TweetsSearch = new TweetsSearch(spark)
     val tweetsAnalyzer: TweetsAnalyzer = new TweetsAnalyzer(spark)
 
-    // Forbes create object
+   import tweetsSearch._
+
+   // Import and clean -- Tweets
+   val tweetsDF: Dataset[Row] = tweetsLoader.loadAllTweets().cache()
+   val tweetsCleanedDF: Dataset[Row] = tweetsCleaner.cleanAllTweets(tweetsDF)
+
+   // Tweets Analyze
+   // Search specific
+
+   val trumpTweetsDF: Dataset[Row] = tweetsCleanedDF.transform(searchByKeyWord("Trump"))
+     .transform(onlyInLocation("United States"))
+
+   // Analytics
+   val sourceCount: Dataset[Row] = tweetsAnalyzer.calculateSourceCount(trumpTweetsDF)
+   val hashtagCount: Dataset[Row] = tweetsAnalyzer.calculateHashtags(trumpTweetsDF)
+
+
+   sourceCount.show()
+   hashtagCount.show()
+   tweetsCleanedDF.show()
+
+   // ********** Tweets ETL END
+
+   // ********** Forbes ETL
+
+   // Forbes create object
     val forbesLoader: ForbesLoader = new ForbesLoader(spark)
     val forbesCleaner: ForbesCleaner = new ForbesCleaner(spark)
     val forbesAnalyzer: ForbesAnalyzer = new ForbesAnalyzer(spark)
 
-    import tweetsSearch._
+   // Import and clean -- Forbes
 
-    // Import and clean -- Tweets
-    val tweetsDF: Dataset[Row] = tweetsLoader.loadAllTweets().cache()
-    val tweetsCleanedDF: Dataset[Row] = tweetsCleaner.cleanAllTweets(tweetsDF)
+   val forbesDF: Dataset[Row] = forbesLoader.loadForbes().cache()
+   val forbesCleanedDF: Dataset[Row] = forbesCleaner.cleanForbes(forbesDF)
 
-    // Import and clean -- Forbes
+   // Forbes Analyze
 
-    val forbesDF: Dataset[Row] = forbesLoader.loadForbes().cache()
-    val forbesCleanedDF: Dataset[Row] = forbesCleaner.cleanForbes(forbesDF)
+   val under50Forbes: Dataset[Row] = forbesAnalyzer.filterUnderFiftyAgeForbes(forbesCleanedDF)
+   val countCountriesForbes: Dataset[Row] = forbesAnalyzer.countCountriesForbes(forbesCleanedDF)
+   val top10SelfMadeForbes: Dataset[Row] = forbesAnalyzer.top10SelfMade(forbesCleanedDF)
 
-
-    // Tweets Analyze
-    // Search specific
-
-    val trumpTweetsDF: Dataset[Row] = tweetsCleanedDF.transform(searchByKeyWord("Trump"))
-      .transform(onlyInLocation("United States"))
-
-    // Analytics
-    val sourceCount: Dataset[Row] = tweetsAnalyzer.calculateSourceCount(trumpTweetsDF)
-    val hashtagCount: Dataset[Row] = tweetsAnalyzer.calculateHashtags(trumpTweetsDF)
-
-
-    sourceCount.show()
-    hashtagCount.show()
-    tweetsCleanedDF.show()
-
-    // Forbes Analyze
-
-    val underFiftyForbes: Dataset[Row] = forbesAnalyzer.filterUnderFiftyAgeForbes(forbesCleanedDF)
-    val countCountriesForbes: Dataset[Row] = forbesAnalyzer.countCountriesForbes(forbesCleanedDF)
-    val top10SelfMadeForbes: Dataset[Row] = forbesAnalyzer.countTop10SelfMade(forbesCleanedDF)
-
-    underFiftyForbes.show()
+   under50Forbes.show()
    // TOP 4 Countries with Forbes people
-    countCountriesForbes.show(4)
+   countCountriesForbes.show(4)
 
    // TOP 10 Self Made Forbes
    top10SelfMadeForbes.show()
 
+   // ********** Forbes ETL END
+
+   // *********** TweetsUser ETL
+
+   // TweetsUser create objects
+   val tweetsUserLoader: TweetsUserLoader = new TweetsUserLoader(spark)
+   val tweetsUserCleaner: TweetsUserCleaner = new TweetsUserCleaner(spark)
+   val tweetsUserAnalyzer: TweetsUserAnalyzer = new TweetsUserAnalyzer(spark)
+
+   // Import and clean -- TweetsUser
+
+   val tweetsUserDF: Dataset[Row] = tweetsUserLoader.loadTwitter().cache()
+   val tweetsUserCleanedDF: Dataset[Row] = tweetsUserCleaner.cleanTweetsUser(tweetsUserDF)
+
+   // TweetsUser Analyze
+
+   val countTextTweets: Dataset[Row] = tweetsUserAnalyzer.countWordsInTextColumn(tweetsUserCleanedDF)
+   val countUserPosts: Dataset[Row] = tweetsUserAnalyzer.countUserPosts(tweetsUserCleanedDF)
+   val top10LikedPosts: Dataset[Row] = tweetsUserAnalyzer.top10LikedPosts(tweetsUserCleanedDF)
+
+   countTextTweets.show()
+   countUserPosts.show()
+   top10LikedPosts.show()
+
+   val currentDate = LocalDate.now().toString
+
+   // save to parquet format file
+   /*
+   top10LikedPosts.write
+     .parquet("Sink/top10LikedPosts.parquet")
+    */
+
+   /*
+   // save to csv format file
+   top10LikedPosts.write
+     .csv(s"Sink/top10LikedPosts_$currentDate.csv")
+    */
+   // *********** TweetsUser ETL END
 
   }
+
 }
