@@ -1,9 +1,7 @@
-import analysers.{ForbesAnalyzer, TweetsAnalyzer, TweetsSearch, TweetsUserAnalyzer}
-import cleaners.{ForbesCleaner, TweetsCleaner, TweetsUserCleaner}
-import loaders.{ForbesLoader, TweetsLoader, TweetsUserLoader}
+import analysers._
+import cleaners.{ForbesCleaner, TransactionCleaner, TweetsCleaner, TweetsUserCleaner}
+import loaders.{ForbesLoader, TransactionLoader, TweetsLoader, TweetsUserLoader}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-
-import java.time.LocalDate
 
 
 object Main {
@@ -17,13 +15,54 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val spark: SparkSession = SparkSession.builder()
-      .appName("twitterProject")
+      .appName("ETL-Project")
       .master("local[*]") // use all cores
       .getOrCreate()
 
 
-    // Validate schema
+   // Connection with database: PostgreSQL
+
+   /*
+   val TransactionDB_DF = spark.read
+     .format("jdbc")
+     .option("url", "jdbc:postgresql://host.docker.internal:5438/postgres")
+     .option("dbtable", "\"Transaction\"") // STAGING_DB -- baze -- table test
+     .option("user", "postgres")
+     .option("password", "postgres")
+     .load()
+
+   TransactionDB_DF.show()
+   TransactionDB_DF.printSchema()
+*/
+   val transactionLoader: TransactionLoader = new TransactionLoader(spark)
+   val transactionCleaner: TransactionCleaner = new TransactionCleaner(spark)
+   val transactionAnalyzer: TransactionAnalyzer = new TransactionAnalyzer(spark)
+
+   val transactionDF = transactionLoader.loadTransactions().cache()
+   val cleanedTransactionDF = transactionCleaner.cleanAllTransactions(transactionDF)
+
+
+   val transactionUSA: Dataset[Row] = transactionAnalyzer.filterClientsUSA(cleanedTransactionDF)
+   val transactionFrance: Dataset[Row] = transactionAnalyzer.filterClientsFrance(cleanedTransactionDF)
+   val transactionChina: Dataset[Row] = transactionAnalyzer.filterClientsChina(cleanedTransactionDF)
+   val transactionPoland: Dataset[Row] = transactionAnalyzer.filterClientsPoland(cleanedTransactionDF)
+
+
+
 /*
+   TransactionDB_DF.write
+   //  .mode("append") -- Append data from used dataset
+     .format("jdbc")
+     .option("url", "jdbc:postgresql://host.docker.internal:5438/postgres")
+     .option("dbtable", "\"transaction_UK\"")
+     .option("user", "postgres")
+     .option("password", "postgres")
+     .save()
+
+ */
+
+    // Validate schema
+    /*
     val grammysDF: Dataset[Row] = spark.read
       .option("header", "true")
       .csv("GRAMMYs_tweets.csv")
@@ -150,12 +189,13 @@ object Main {
    countUserPosts.show()
    top10LikedPosts.show()
 
-   val currentDate = LocalDate.now().toString
+
 
    // save to parquet format file
    /*
+   val currentDate = LocalDate.now().toString
    top10LikedPosts.write
-     .parquet("Sink/top10LikedPosts.parquet")
+     .parquet(s"Sink/top10LikedPosts_$currentDate.parquet")
     */
 
    /*
@@ -164,6 +204,7 @@ object Main {
      .csv(s"Sink/top10LikedPosts_$currentDate.csv")
     */
    // *********** TweetsUser ETL END
+
 
   }
 
