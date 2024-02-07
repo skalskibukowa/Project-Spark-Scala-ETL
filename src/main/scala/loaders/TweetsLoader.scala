@@ -17,11 +17,11 @@ class TweetsLoader(sparkSession: SparkSession) {
     val covidDF: Dataset[Row] = loadCovid()
     val financialDF: Dataset[Row] = loadFinance()
     val grammysDF: Dataset[Row] = loadGrammys()
-    val twitterDF: Dataset[Row] = loadTwitter()
 
-    covidDF.unionByName(financialDF, true)
+
+    covidDF
+      .unionByName(financialDF, true)
       .unionByName(grammysDF, true)
-      .unionByName(twitterDF, true)
   }
 
   def loadCovid(): Dataset[Row] = sparkSession.read
@@ -41,9 +41,5 @@ class TweetsLoader(sparkSession: SparkSession) {
     .withColumn("category", lit(TweetsLoader.GRAMMYS_LABEL))
     .na.drop()
 
-  def loadTwitter(): Dataset[Row] = sparkSession.read
-    .option("header", "true")
-    .csv("Datasource/twitter_dataset.csv")
-    .withColumn("category", lit(TweetsLoader.TWITTER_LABEL))
-    .na.drop()
+
 }

@@ -12,7 +12,7 @@ class ForbesCleaner(sparkSession: SparkSession) {
     df.withColumn("rank", col("rank").cast(DataTypes.IntegerType))
       .withColumn("rank", col("rank").cast("integer")).filter($"rank".isNotNull)
     .withColumn("age", col("age").cast(DataTypes.IntegerType))
-    .withColumn("Worth", col("finalWorth").cast(DataTypes.IntegerType))
+    .withColumn("finalWorth", col("finalWorth").cast(DataTypes.IntegerType))
     .withColumn("year", col("year").cast(DataTypes.IntegerType))
     .withColumn("month", col("month").cast(DataTypes.IntegerType))
     .withColumn("birthDate", col("birthDate").cast(DataTypes.DateType))

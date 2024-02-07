@@ -6,7 +6,6 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession, functions}
 
 class TweetsCleaner(sparkSession: SparkSession) {
 
-
   def cleanAllTweets(df: Dataset[Row]): Dataset[Row] ={
     df.withColumn("hashtags", regexp_replace(col("hashtags"), "[']", ""))
       .withColumn("hashtags", regexp_replace(col("hashtags"), "\\[", ""))

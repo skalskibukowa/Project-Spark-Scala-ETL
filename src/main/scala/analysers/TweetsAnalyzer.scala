@@ -21,6 +21,8 @@ class TweetsAnalyzer(sparkSession: SparkSession) {
     AGGREGATION
     @param df
     @return Dataframe with columns hashtag, count
+
+    Description: Show number of hashtags
   */
 
   def calculateHashtags(df: Dataset[Row]): Dataset[Row] = {
@@ -32,6 +34,8 @@ class TweetsAnalyzer(sparkSession: SparkSession) {
   AGGREGATION
   @param df
   @return Dataframe with columns is_retweet, count
+
+  Description: Show number of retweets
 */
 
   def calculateIsRetweetCount(df: Dataset[Row]): Dataset[Row]={
@@ -39,18 +43,22 @@ class TweetsAnalyzer(sparkSession: SparkSession) {
   }
 
   /*
-AGGREGATION
-@param df
-@return Dataframe with columns source,count
+  AGGREGATION
+  @param df
+  @return Dataframe with columns source,count
+
+  Description: Show number of sources
 */
   def calculateSourceCount(df: Dataset[Row]): Dataset[Row]={
     df.groupBy(TweetsAnalyzer.SOURCE_COLUMN).count()
   }
 
   /*
-AGGREGATION
-@param df
-@return Dataframe with columns user_location_avg
+  AGGREGATION
+  @param df
+  @return Dataframe with columns user_location_avg
+
+  Description: Show average user followers per location
 */
 
   def calculateAvgUserFollowersPerLocation(df: Dataset[Row]): Dataset[Row]={
