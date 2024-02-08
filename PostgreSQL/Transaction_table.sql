@@ -1,3 +1,21 @@
+CREATE TABLE IF NOT EXISTS public."Transaction"
+(
+    "ID" integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    first_name text COLLATE pg_catalog."default",
+    last_name text COLLATE pg_catalog."default",
+    email text COLLATE pg_catalog."default",
+    gender text COLLATE pg_catalog."default",
+    "Quantity" integer,
+    "Value" integer,
+    "Currency" text COLLATE pg_catalog."default",
+    "Product" text COLLATE pg_catalog."default",
+    "Credit_Card" bigint,
+    "Country" text COLLATE pg_catalog."default",
+    "Postal_Code" text COLLATE pg_catalog."default",
+    "Street_Address" text COLLATE pg_catalog."default"
+);
+
+
 insert into public."Transaction" (first_name, last_name, email, gender, "Quantity", "Value", "Currency", "Product", "Credit_Card", "Country", "Postal_Code", "Street_Address") values ('Tomlin', 'Yon', 'tyon0@china.com.cn', 'Male', 421, 34270, 'Zloty', 'Computer Software: Programming, Data Processing', '3583642766684284', 'Poland', '43-418', '160 Northport Way');
 insert into public."Transaction" (first_name, last_name, email, gender, "Quantity", "Value", "Currency", "Product", "Credit_Card", "Country", "Postal_Code", "Street_Address") values ('Rab', 'Gemeau', 'rgemeau1@whitehouse.gov', 'Male', 931, 11272, 'Zloty', 'n/a', '5108752133035119', 'Poland', '58-140', '54 Hanson Alley');
 insert into public."Transaction" (first_name, last_name, email, gender, "Quantity", "Value", "Currency", "Product", "Credit_Card", "Country", "Postal_Code", "Street_Address") values ('Daryn', 'Bidnall', 'dbidnall2@apple.com', 'Female', 482, 5686, 'Ruble', 'Engineering & Construction', '5108758517703792', 'Russia', '188919', '5 Southridge Pass');

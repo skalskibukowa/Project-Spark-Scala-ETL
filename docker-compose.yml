@@ -1,0 +1,28 @@
+version: "3.9"
+
+networks:
+  bridge:
+    driver: bridge
+
+services:
+  postgres:
+    build:
+      context: ./postgreSQL
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "5438:5432"
+    networks:
+      - bridge
+    container_name: postgres
+
+volumes:
+  settings:
+  data:
