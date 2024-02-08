@@ -1,3 +1,4 @@
+import Ingestions.TransactionIngests
 import analysers._
 import cleaners.{ForbesCleaner, TransactionCleaner, TweetsCleaner, TweetsUserCleaner}
 import loaders.{ForbesLoader, TransactionLoader, TweetsLoader, TweetsUserLoader}
@@ -37,6 +38,7 @@ object Main {
    val transactionLoader: TransactionLoader = new TransactionLoader(spark)
    val transactionCleaner: TransactionCleaner = new TransactionCleaner(spark)
    val transactionAnalyzer: TransactionAnalyzer = new TransactionAnalyzer(spark)
+   val transactionIngest: TransactionIngests = new TransactionIngests(spark)
 
    val transactionDF = transactionLoader.loadTransactions().cache()
    val cleanedTransactionDF = transactionCleaner.cleanAllTransactions(transactionDF)
@@ -47,7 +49,10 @@ object Main {
    val transactionChina: Dataset[Row] = transactionAnalyzer.filterClientsChina(cleanedTransactionDF)
    val transactionPoland: Dataset[Row] = transactionAnalyzer.filterClientsPoland(cleanedTransactionDF)
 
-
+   transactionIngest.ingestTransactionFrance(transactionFrance)
+   transactionIngest.ingestTransactionChina(transactionChina)
+   transactionIngest.ingestTransactionUSA(transactionUSA)
+   transactionIngest.ingestTransactionPoland(transactionPoland)
 
 /*
    TransactionDB_DF.write
