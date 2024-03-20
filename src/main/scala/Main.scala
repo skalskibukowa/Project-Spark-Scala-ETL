@@ -20,21 +20,6 @@ object Main {
       .master("local[*]") // use all cores
       .getOrCreate()
 
-
-   // Connection with database: PostgreSQL
-
-   /*
-   val TransactionDB_DF = spark.read
-     .format("jdbc")
-     .option("url", "jdbc:postgresql://host.docker.internal:5438/postgres")
-     .option("dbtable", "\"Transaction\"") // STAGING_DB -- baze -- table test
-     .option("user", "postgres")
-     .option("password", "postgres")
-     .load()
-
-   TransactionDB_DF.show()
-   TransactionDB_DF.printSchema()
-*/
    val transactionLoader: TransactionLoader = new TransactionLoader(spark)
    val transactionCleaner: TransactionCleaner = new TransactionCleaner(spark)
    val transactionAnalyzer: TransactionAnalyzer = new TransactionAnalyzer(spark)
@@ -54,65 +39,6 @@ object Main {
    transactionIngest.ingestTransactionUSA(transactionUSA)
    transactionIngest.ingestTransactionPoland(transactionPoland)
 
-/*
-   TransactionDB_DF.write
-   //  .mode("append") -- Append data from used dataset
-     .format("jdbc")
-     .option("url", "jdbc:postgresql://host.docker.internal:5438/postgres")
-     .option("dbtable", "\"transaction_UK\"")
-     .option("user", "postgres")
-     .option("password", "postgres")
-     .save()
-
- */
-
-    // Validate schema
-    /*
-    val grammysDF: Dataset[Row] = spark.read
-      .option("header", "true")
-      .csv("GRAMMYs_tweets.csv")
-
-    grammysDF.show(false)
-    grammysDF.printSchema()
-
-
-    val financialDF: Dataset[Row] = spark.read
-      .option("header", "true")
-      .csv("financial.csv")
-
-    financialDF.show(false)
-    financialDF.printSchema()
-
-    val covidDF: Dataset[Row] = spark.read
-      .option("header", "true")
-      .csv("covid19_tweets.csv")
-
-    covidDF.show(false)
-    covidDF.printSchema()
-
-    val forbesDF: Dataset[Row] = spark.read
-      .option("header", "true")
-      .option("sep", ",")
-      .csv("forbes_2022_billionaires.csv")
-      .drop("bio", "about")
-
-
-    filteredForbesDF.show(false)
-    filteredForbesDF.printSchema()
-
-    val twitterDF: Dataset[Row] = spark.read
-      .option("header", "true")
-      .option("sep", ",")
-      .csv("twitter_dataset.csv")
-
-    twitterDF.show(false)
-    twitterDF.printSchema()
-
-    println(covidDF.count())
-    println(financialDF.count())
-    println(grammysDF.count())
-    println(twitterDF.count())
- */
 
    // ********** Tweets ETL
 
