@@ -18,6 +18,5 @@ class ForbesCleaner(sparkSession: SparkSession) {
       .withColumn("birthDate", col("birthDate").cast(DataTypes.DateType))
       .withColumn("philanthropyScore", col("philanthropyScore").cast(DataTypes.FloatType))
       .na.fill("N/A")
-
   }
 }
