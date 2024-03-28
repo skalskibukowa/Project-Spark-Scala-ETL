@@ -40,13 +40,13 @@ class ForbesCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
     // cleanForbes function
     val cleanedDF = forbesCleaner.cleanForbes(inputDF)
 
-    assert(cleanedDF.schema("rank").dataType.typeName === "IntegerType") // Check if rank column is of IntegerType
-    assert(cleanedDF.schema("age").dataType.typeName === "IntegerType") // Check if age column is of IntegerType
-    assert(cleanedDF.schema("finalWorth").dataType.typeName === "IntegerType") // Check if finalWorth column is of IntegerType
-    assert(cleanedDF.schema("year").dataType.typeName === "IntegerType") // Check if year column is of IntegerType
-    assert(cleanedDF.schema("month").dataType.typeName === "IntegerType") // Check if month column is of IntegerType
-    assert(cleanedDF.schema("birthDate").dataType.typeName === "DateType") // Check if birthDate column is of DateType
-    assert(cleanedDF.schema("philanthropyScore").dataType.typeName === "FloatType") // Check if philanthropyScore column is of FloatType
+    assert(cleanedDF.schema("rank").dataType.typeName === "integer") // Check if rank column is of IntegerType
+    assert(cleanedDF.schema("age").dataType.typeName === "integer") // Check if age column is of IntegerType
+    assert(cleanedDF.schema("finalWorth").dataType.typeName === "integer") // Check if finalWorth column is of IntegerType
+    assert(cleanedDF.schema("year").dataType.typeName === "integer") // Check if year column is of IntegerType
+    assert(cleanedDF.schema("month").dataType.typeName === "integer") // Check if month column is of IntegerType
+    assert(cleanedDF.schema("birthDate").dataType.typeName === "date") // Check if birthDate column is of DateType
+    assert(cleanedDF.schema("philanthropyScore").dataType.typeName === "float") // Check if philanthropyScore column is of FloatType
   }
 
 }
