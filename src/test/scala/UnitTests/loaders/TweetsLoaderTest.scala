@@ -1,4 +1,4 @@
-package UnitTests.loadSource
+package UnitTests.loaders
 
 import loaders.TweetsLoader
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
