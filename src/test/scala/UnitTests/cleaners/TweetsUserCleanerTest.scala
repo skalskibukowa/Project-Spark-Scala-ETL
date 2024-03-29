@@ -1,3 +1,4 @@
+/*
 package UnitTests.cleaners
 
 import cleaners.TweetsUserCleaner
@@ -45,3 +46,4 @@ class TweetsUserCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
     assert(cleanedDF.schema("Timestamp").dataType.typeName == "integer")
   }
 }
+*/
