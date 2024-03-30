@@ -59,7 +59,6 @@ class ForbesAnalyzerTest extends AnyFunSuite with BeforeAndAfterAll {
     val countryCountsDF = analyzer.countCountriesForbes(data)
 
     // Assert expected countries
-    countryCountsDF.show()
     assert(countryCountsDF.filter(col(ForbesAnalyzer.COUNTRY) === "USA").head().getAs[Int](ForbesAnalyzer.COUNTRY_NO) === 3)
     assert(countryCountsDF.filter(col(ForbesAnalyzer.COUNTRY) === "India").head().getAs[Int](ForbesAnalyzer.COUNTRY_NO) === 1)
 
@@ -74,21 +73,29 @@ class ForbesAnalyzerTest extends AnyFunSuite with BeforeAndAfterAll {
   test("top10SelfMade should show top 10 self-made people") {
 
     val data = spark.createDataFrame(Seq(
-      (1, "Bill Gates", 45, 100.0, lit("True"), "Forbes"),
-      (2, "Warren Buffett", 80, 90.0, lit("False"), "Forbes"),
-      (3, "Mark Zuckerberg", 38, 80.0, lit("True"), "Forbes"),
-      (4, "Mukesh Ambani", 65, 70.0, lit("True"), "Forbes"),
-      (5, "Jeff Bezos", 52, 110.0, lit("True"), "Forbes"),
-      (6, "Larry Ellison", 78, 60.0, lit("True"), "Forbes"),
-      (7, "Charles Koch", 86, 50.0, lit("False"), "Forbes"),
-      (8, "David Koch", 86, 50.0, lit("False"), "Forbes"),
-      (9, "Michael Bloomberg", 79, 50.0, lit("True"), "Forbes"),
-      (10, "Larry Page", 49, 48.0, lit("True"), "Forbes"),
-      (11, "Ricky Morris", 20, 50.0, lit("True"), "Forbes"),
-      (13, "Wart Lomn", 40, 50.0, lit("True"), "Forbes"),
-      (14, "Draws Dsaim", 30, 48.0, lit("True"), "Forbes"),
-      (15, "Vericks Flas", 20, 50.0, lit("True"), "Forbes")
+      (1, "Bill Gates", 45, 100.0, "True", "Forbes"),
+      (2, "Warren Buffett", 80, 90.0, "False", "Forbes"),
+      (3, "Mark Zuckerberg", 38, 80.0, "True", "Forbes"),
+      (4, "Mukesh Ambani", 65, 70.0, "True", "Forbes"),
+      (5, "Jeff Bezos", 52, 110.0, "True", "Forbes"),
+      (6, "Larry Ellison", 78, 60.0, "True", "Forbes"),
+      (7, "Charles Koch", 86, 50.0, "False", "Forbes"),
+      (8, "David Koch", 86, 50.0, "False", "Forbes"),
+      (9, "Michael Bloomberg", 79, 50.0, "True", "Forbes"),
+      (10, "Larry Page", 49, 48.0, "True", "Forbes"),
+      (11, "Ricky Morris", 20, 50.0, "True", "Forbes"),
+      (13, "Wart Lomn", 40, 50.0, "True", "Forbes"),
+      (14, "Draws Dsaim", 30, 48.0, "True", "Forbes"),
+      (15, "Vericks Flas", 20, 50.0, "True", "Forbes")
     )).toDF(ForbesAnalyzer.RANK, ForbesAnalyzer.PERSON_NAME, ForbesAnalyzer.AGE, ForbesAnalyzer.FINAL_WORTH, ForbesAnalyzer.SELF_MADE, ForbesAnalyzer.SOURCE)
+
+    val filteredDF = analyzer.top10SelfMade(data)
+
+    // Assert expected number of rows (limited to 10)
+    assert(filteredDF.count() === 10)
+
+    // Check person from top10 self-made
+    assert(filteredDF.filter(col(ForbesAnalyzer.PERSON_NAME) === "Bill Gates").count() === 1)
 
 
   }
