@@ -29,6 +29,7 @@ class TweetsUserAnalyzer(sparkSession: SparkSession) {
       TweetsUserAnalyzer.LIKES,
       TweetsUserAnalyzer.DATE)
       .orderBy(desc(TweetsUserAnalyzer.RETWEETS))
+      .limit(10)
   }
 
 
@@ -47,6 +48,7 @@ class TweetsUserAnalyzer(sparkSession: SparkSession) {
         TweetsUserAnalyzer.LIKES,
         TweetsUserAnalyzer.DATE)
       .orderBy(desc(TweetsUserAnalyzer.LIKES))
+      .limit(10)
   }
 
 
