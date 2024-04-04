@@ -1,17 +1,14 @@
-/*
 package UnitTests.cleaners
 
 import cleaners.TweetsUserCleaner
-import org.apache.spark.sql.functions.lit
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-class TweetsUserCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
+class TweetsUserCleanerTest_v2 extends AnyFunSuite with BeforeAndAfterAll{
 
   private var spark: SparkSession = _
   private var tweetsUserCleaner: TweetsUserCleaner = _
-  private var inputDF: DataFrame = _
 
   override def beforeAll(): Unit = {
 
@@ -24,12 +21,6 @@ class TweetsUserCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
 
     tweetsUserCleaner = new TweetsUserCleaner(spark)
 
-    // Input data
-    inputDF = spark.createDataFrame(Seq(
-      (123L, 456L, 789L, lit("2023-03-28")),
-      (987L, 321L, 0L, lit("2022-02-14"))
-    )).toDF("Tweet_ID", "Retweets", "Likes", "Timestamp")
-
   }
 
   override def afterAll(): Unit = {
@@ -38,6 +29,12 @@ class TweetsUserCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
 
   test("should cast Tweet_ID, Retweets, Likes, and cast Timestamp to DateType") {
 
+    // Input data
+   val inputDF = spark.createDataFrame(Seq(
+      (123L, 456L, 789L, "2023-03-28"),
+      (987L, 321L, 0L, "2022-02-14")
+    )).toDF("Tweet_ID", "Retweets", "Likes", "Timestamp")
+
     val cleanedDF = tweetsUserCleaner.cleanTweetsUser(inputDF)
 
     assert(cleanedDF.schema("Tweet_ID").dataType.typeName == "integer")
@@ -45,5 +42,5 @@ class TweetsUserCleanerTest extends AnyFunSuite with BeforeAndAfterAll{
     assert(cleanedDF.schema("Likes").dataType.typeName == "integer")
     assert(cleanedDF.schema("Timestamp").dataType.typeName == "integer")
   }
+
 }
-*/
